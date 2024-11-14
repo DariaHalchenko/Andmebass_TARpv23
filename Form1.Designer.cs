@@ -40,8 +40,11 @@
             this.lisa_btn = new System.Windows.Forms.Button();
             this.kustuta_btn = new System.Windows.Forms.Button();
             this.uuenda_btn = new System.Windows.Forms.Button();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.Pildi_otsing_btn = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.andmebaasDataSetBindingSource)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -97,11 +100,13 @@
             // 
             // dataGridView1
             // 
+            this.dataGridView1.BackgroundColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Location = new System.Drawing.Point(35, 251);
             this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(730, 172);
+            this.dataGridView1.Size = new System.Drawing.Size(843, 172);
             this.dataGridView1.TabIndex = 6;
+            this.dataGridView1.RowHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_RowHeaderMouseClick);
             // 
             // lisa_btn
             // 
@@ -136,11 +141,32 @@
             this.uuenda_btn.UseVisualStyleBackColor = true;
             this.uuenda_btn.Click += new System.EventHandler(this.Uuenda_btn_Click);
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Location = new System.Drawing.Point(515, 26);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(363, 204);
+            this.pictureBox1.TabIndex = 10;
+            this.pictureBox1.TabStop = false;
+            // 
+            // Pildi_otsing_btn
+            // 
+            this.Pildi_otsing_btn.Font = new System.Drawing.Font("Microsoft JhengHei", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Pildi_otsing_btn.Location = new System.Drawing.Point(383, 190);
+            this.Pildi_otsing_btn.Name = "Pildi_otsing_btn";
+            this.Pildi_otsing_btn.Size = new System.Drawing.Size(110, 40);
+            this.Pildi_otsing_btn.TabIndex = 11;
+            this.Pildi_otsing_btn.Text = "Pildi otsing";
+            this.Pildi_otsing_btn.UseVisualStyleBackColor = true;
+            this.Pildi_otsing_btn.Click += new System.EventHandler(this.Pildi_otsing_btn_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(951, 450);
+            this.Controls.Add(this.Pildi_otsing_btn);
+            this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.uuenda_btn);
             this.Controls.Add(this.kustuta_btn);
             this.Controls.Add(this.lisa_btn);
@@ -155,6 +181,7 @@
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.andmebaasDataSetBindingSource)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -174,6 +201,8 @@
         private System.Windows.Forms.Button lisa_btn;
         private System.Windows.Forms.Button kustuta_btn;
         private System.Windows.Forms.Button uuenda_btn;
+        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Button Pildi_otsing_btn;
     }
 }
 
