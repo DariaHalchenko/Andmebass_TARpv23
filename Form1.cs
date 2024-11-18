@@ -87,7 +87,7 @@ namespace Andmebass_TARpv23
             {
                 MessageBox.Show("Viga kustutamisel");
             }
-        } //hiegjme
+        } 
 
         private void Uuenda_btn_Click(object sender, EventArgs e)
         {
@@ -143,7 +143,7 @@ namespace Andmebass_TARpv23
             }
             catch (Exception)
             {
-                pictureBox1.Image = Image.FromFile(Path.Combine(Path.GetFullPath(@"..\..\Pildid"),"pilt.jpg"));
+                pictureBox1.Image = Image.FromFile(Path.Combine(Path.GetFullPath(@"..\..\Pildid"), "pilt.jpg"));
             }
         }
 
@@ -172,5 +172,5 @@ namespace Andmebass_TARpv23
                 MessageBox.Show("Puudub toode nimetus või ole Cancel vajutatud");
             }
         }
-    }//
+    }
 }
