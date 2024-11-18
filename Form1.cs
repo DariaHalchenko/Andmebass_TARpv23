@@ -66,29 +66,26 @@ namespace Andmebass_TARpv23
 
         private void Kustuta_btn_Click(object sender, EventArgs e)
         {
-            if (dataGridView1.SelectedRows.Count > 0)
+            try
             {
-                try
+                ID = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells["Id"].Value);
+                if (ID != 0)
                 {
-                    int deletedId = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells["Id"].Value);
                     conn.Open();
                     cmd = new SqlCommand("DELETE FROM Toode WHERE Id=@id", conn);
-                    cmd.Parameters.AddWithValue("@id", deletedId);
+                    cmd.Parameters.AddWithValue("@id", ID);
                     cmd.ExecuteNonQuery();
 
                     conn.Close();
+                    Emaldamine();
                     NaitaAndmed();
 
                     MessageBox.Show("Kirje kustutatud");
                 }
-                catch (Exception)
-                {
-                    MessageBox.Show("Viga kustutamisel");
-                }
             }
-            else
+            catch (Exception)
             {
-                MessageBox.Show("Valige kustutamiseks kirje");
+                MessageBox.Show("Viga kustutamisel");
             }
         }
 
@@ -104,14 +101,12 @@ namespace Andmebass_TARpv23
                     cmd.Parameters.AddWithValue("@toode", Nimetus_txt.Text);
                     cmd.Parameters.AddWithValue("@kogus", Kogus_txt.Text);
                     cmd.Parameters.AddWithValue("@hind", Hind_txt.Text);
+                    cmd.Parameters.AddWithValue("@pilt", Nimetus_txt.Text + extension);
                     cmd.ExecuteNonQuery();
 
                     conn.Close();
                     NaitaAndmed();
-                    MessageBox.Show("Andmed elukalt uuendatud", "Uuendamine");
-                    Nimetus_txt.Text = "";
-                    Kogus_txt.Text = "";
-                    Hind_txt.Text = "";
+                    Emaldamine();
                 }
                 catch (Exception)
                 {
@@ -123,6 +118,16 @@ namespace Andmebass_TARpv23
                 MessageBox.Show("Sisesta andmeid");
             }
         }
+
+        private void Emaldamine()
+        {
+            MessageBox.Show("Andmed elukalt uuendatud", "Uuendamine");
+            Nimetus_txt.Text = "";
+            Kogus_txt.Text = "";
+            Hind_txt.Text = "";
+            pictureBox1.Image = Image.FromFile(Path.Combine(Path.GetFullPath(@"..\..\Pildid"), "pilt.jpg"));
+        }
+
         int ID = 0;
         private void dataGridView1_RowHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
@@ -130,6 +135,16 @@ namespace Andmebass_TARpv23
             Nimetus_txt.Text = dataGridView1.Rows[e.RowIndex].Cells["Nimetus"].Value.ToString();
             Kogus_txt.Text = dataGridView1.Rows[e.RowIndex].Cells["Kogus"].Value.ToString();
             Hind_txt.Text = dataGridView1.Rows[e.RowIndex].Cells["Hind"].Value.ToString();
+            try
+            {
+                pictureBox1.Image = Image.FromFile(Path.Combine(Path.GetFullPath(@"..\..\Pildid"),
+                    dataGridView1.Rows[e.RowIndex].Cells["Pilt"].Value.ToString()));
+                pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            }
+            catch (Exception)
+            {
+                pictureBox1.Image = Image.FromFile(Path.Combine(Path.GetFullPath(@"..\..\Pildid"),"pilt.jpg"));
+            }
         }
 
         private void Pildi_otsing_btn_Click(object sender, EventArgs e)
@@ -142,9 +157,9 @@ namespace Andmebass_TARpv23
             if (open.ShowDialog() == DialogResult.OK && Nimetus_txt.Text != null)
             {
                 save = new SaveFileDialog();
-                save.InitialDirectory = Path.GetFullPath(@"..\..\..\Pildid");
+                save.InitialDirectory = Path.GetFullPath(@"..\..\Pildid");
                 extension = Path.GetExtension(open.FileName);
-                save.FileName = "Nimetus_txt.Text" + extension;
+                save.FileName = Nimetus_txt.Text + extension;
                 save.Filter = "Images" + Path.GetExtension(open.FileName) + "|" + Path.GetExtension(open.FileName);
                 if (save.ShowDialog() == DialogResult.OK && Nimetus_txt != null)
                 {
