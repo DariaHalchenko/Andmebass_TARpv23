@@ -172,5 +172,5 @@ namespace Andmebass_TARpv23
                 MessageBox.Show("Puudub toode nimetus või ole Cancel vajutatud");
             }
         }
-    }
+    }//
 }
