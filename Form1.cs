@@ -87,7 +87,7 @@ namespace Andmebass_TARpv23
             {
                 MessageBox.Show("Viga kustutamisel");
             }
-        }
+        } //
 
         private void Uuenda_btn_Click(object sender, EventArgs e)
         {
