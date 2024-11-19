@@ -14,7 +14,7 @@ namespace Andmebass_TARpv23
 {
     public partial class Form1 : Form
     {
-        SqlConnection conn = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=""C:\Users\opilane\source\repos\Daria Halchenko TARpv23\Andmebass_TARpv23\Andmebaas1.mdf"";Integrated Security=True");
+        SqlConnection conn = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\opilane\Source\Repos\Andmebass_TARpv23\Andmebaas1.mdf;Integrated Security=True");
         SqlCommand cmd;
         SqlDataAdapter adapter;
         OpenFileDialog open;
@@ -75,19 +75,46 @@ namespace Andmebass_TARpv23
                     cmd = new SqlCommand("DELETE FROM Toode WHERE Id=@id", conn);
                     cmd.Parameters.AddWithValue("@id", ID);
                     cmd.ExecuteNonQuery();
-
                     conn.Close();
+
+                    // Удаляем файл
+                    Kustuta_fail(dataGridView1.SelectedRows[0].Cells["Pilt"].Value.ToString());
+
                     Emaldamine();
                     NaitaAndmed();
 
-                    MessageBox.Show("Kirje kustutatud");
+                    MessageBox.Show("Запись успешно удалена", "Удаление");
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                MessageBox.Show("Viga kustutamisel");
+                MessageBox.Show($"Ошибка при удалении записи: {ex.Message}");
             }
-        } 
+        }
+
+        private void Kustuta_fail(string file)
+        {
+            try
+            {
+                // Полный путь к файлу
+                string filePath = Path.Combine(Path.GetFullPath(@"..\..\Pildid"), file);
+
+                // Проверяем, существует ли файл
+                if (File.Exists(filePath))
+                {
+                    // Сбрасываем картинку в PictureBox
+                    pictureBox1.Image?.Dispose();
+                    pictureBox1.Image = null;
+
+                    // Удаляем файл
+                    File.Delete(filePath);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при удалении файла: {ex.Message}");
+            }
+        }
 
         private void Uuenda_btn_Click(object sender, EventArgs e)
         {
@@ -107,6 +134,7 @@ namespace Andmebass_TARpv23
                     conn.Close();
                     NaitaAndmed();
                     Emaldamine();
+                    MessageBox.Show("Andmed elukalt uuendatud", "Uuendamine");
                 }
                 catch (Exception)
                 {
@@ -121,7 +149,6 @@ namespace Andmebass_TARpv23
 
         private void Emaldamine()
         {
-            MessageBox.Show("Andmed elukalt uuendatud", "Uuendamine");
             Nimetus_txt.Text = "";
             Kogus_txt.Text = "";
             Hind_txt.Text = "";
@@ -131,7 +158,7 @@ namespace Andmebass_TARpv23
         int ID = 0;
         private void dataGridView1_RowHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            ID = (int)dataGridView1.Rows[e.RowIndex].Cells["Id"].Value;
+            ID = (int)dataGridView1.Rows[e.RowIndex].Cells["Id"].Value; // Устанавливаем значение для глобальной переменной ID
             Nimetus_txt.Text = dataGridView1.Rows[e.RowIndex].Cells["Nimetus"].Value.ToString();
             Kogus_txt.Text = dataGridView1.Rows[e.RowIndex].Cells["Kogus"].Value.ToString();
             Hind_txt.Text = dataGridView1.Rows[e.RowIndex].Cells["Hind"].Value.ToString();
@@ -173,4 +200,4 @@ namespace Andmebass_TARpv23
             }
         }
     }
-}
+} 
