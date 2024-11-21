@@ -42,6 +42,8 @@
             this.uuenda_btn = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.Pildi_otsing_btn = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.Ladu_cb = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.andmebaasDataSetBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -51,7 +53,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft JhengHei", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(28, 61);
+            this.label1.Location = new System.Drawing.Point(28, 26);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(98, 26);
             this.label1.TabIndex = 0;
@@ -61,7 +63,7 @@
             // 
             this.Kogus.AutoSize = true;
             this.Kogus.Font = new System.Drawing.Font("Microsoft JhengHei", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Kogus.Location = new System.Drawing.Point(28, 99);
+            this.Kogus.Location = new System.Drawing.Point(30, 62);
             this.Kogus.Name = "Kogus";
             this.Kogus.Size = new System.Drawing.Size(77, 26);
             this.Kogus.TabIndex = 1;
@@ -71,7 +73,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft JhengHei", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(30, 139);
+            this.label2.Location = new System.Drawing.Point(30, 97);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(62, 26);
             this.label2.TabIndex = 2;
@@ -79,21 +81,21 @@
             // 
             // Nimetus_txt
             // 
-            this.Nimetus_txt.Location = new System.Drawing.Point(142, 61);
+            this.Nimetus_txt.Location = new System.Drawing.Point(142, 33);
             this.Nimetus_txt.Name = "Nimetus_txt";
             this.Nimetus_txt.Size = new System.Drawing.Size(119, 20);
             this.Nimetus_txt.TabIndex = 3;
             // 
             // Kogus_txt
             // 
-            this.Kogus_txt.Location = new System.Drawing.Point(142, 99);
+            this.Kogus_txt.Location = new System.Drawing.Point(142, 68);
             this.Kogus_txt.Name = "Kogus_txt";
             this.Kogus_txt.Size = new System.Drawing.Size(119, 20);
             this.Kogus_txt.TabIndex = 4;
             // 
             // Hind_txt
             // 
-            this.Hind_txt.Location = new System.Drawing.Point(142, 139);
+            this.Hind_txt.Location = new System.Drawing.Point(142, 104);
             this.Hind_txt.Name = "Hind_txt";
             this.Hind_txt.Size = new System.Drawing.Size(119, 20);
             this.Hind_txt.TabIndex = 5;
@@ -102,7 +104,7 @@
             // 
             this.dataGridView1.BackgroundColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(35, 251);
+            this.dataGridView1.Location = new System.Drawing.Point(33, 291);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.Size = new System.Drawing.Size(843, 172);
             this.dataGridView1.TabIndex = 6;
@@ -160,11 +162,31 @@
             this.Pildi_otsing_btn.UseVisualStyleBackColor = true;
             this.Pildi_otsing_btn.Click += new System.EventHandler(this.Pildi_otsing_btn_Click);
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Microsoft JhengHei", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(30, 137);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(62, 26);
+            this.label3.TabIndex = 12;
+            this.label3.Text = "Ladu";
+            // 
+            // Ladu_cb
+            // 
+            this.Ladu_cb.FormattingEnabled = true;
+            this.Ladu_cb.Location = new System.Drawing.Point(140, 142);
+            this.Ladu_cb.Name = "Ladu_cb";
+            this.Ladu_cb.Size = new System.Drawing.Size(121, 21);
+            this.Ladu_cb.TabIndex = 13;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(951, 450);
+            this.ClientSize = new System.Drawing.Size(951, 475);
+            this.Controls.Add(this.Ladu_cb);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.Pildi_otsing_btn);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.uuenda_btn);
@@ -203,6 +225,8 @@
         private System.Windows.Forms.Button uuenda_btn;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Button Pildi_otsing_btn;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.ComboBox Ladu_cb;
     }
 }
 

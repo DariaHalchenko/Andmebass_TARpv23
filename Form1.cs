@@ -19,12 +19,31 @@ namespace Andmebass_TARpv23
         SqlDataAdapter adapter;
         OpenFileDialog open;
         SaveFileDialog save;
+        Form popupForm;
+        DataTable laotable;
         string extension;
+        private byte[] imageData;
         public Form1()
         {
             InitializeComponent();
             NaitaAndmed();
+            NaitaLaod();
         }
+
+        private void NaitaLaod()
+        {
+            conn.Open();
+            cmd = new SqlCommand("SELECT Id, LaoNimetus FROM Ladu", conn);
+            adapter = new SqlDataAdapter(cmd);
+            laotable = new DataTable();
+            adapter.Fill(laotable);
+            foreach (DataRow item in laotable.Rows)
+            {
+                Ladu_cb.Items.Add(item["LaoNimetus"]);
+            }
+            conn.Close();
+        }
+
         public void NaitaAndmed()
         {
             conn.Open();
@@ -43,11 +62,21 @@ namespace Andmebass_TARpv23
                 try
                 {
                     conn.Open();
+
+                    cmd = new SqlCommand("SELECT Id FROM Ladu WHERE LaoNimetus=@ladu", conn);
+                    cmd.Parameters.AddWithValue("@ladu", Ladu_cb.Text);
+                    cmd.ExecuteNonQuery();
+                    ID = Convert.ToInt32(cmd.ExecuteScalar());
+
                     cmd = new SqlCommand("Insert into Toode(Nimetus, Kogus, Hind, Pilt) Values (@toode,@kogus,@hind,@pilt)", conn);
                     cmd.Parameters.AddWithValue("@toode", Nimetus_txt.Text);
                     cmd.Parameters.AddWithValue("@kogus", Kogus_txt.Text);
                     cmd.Parameters.AddWithValue("@hind", Hind_txt.Text);
                     cmd.Parameters.AddWithValue("@pilt", Nimetus_txt.Text + extension);
+
+                    //imageData = File.ReadAllBytes(open.FileName);
+                    cmd.Parameters.AddWithValue("@ladu", ID);
+
                     cmd.ExecuteNonQuery();
 
                     conn.Close();
@@ -123,12 +152,13 @@ namespace Andmebass_TARpv23
                 try
                 {
                     conn.Open();
-                    cmd = new SqlCommand("Update Toode SET Nimetus=@toode, Kogus=@kogus, Hind=@hind WHERE Id=@id", conn);
+                    cmd = new SqlCommand("Update Toode SET Nimetus=@toode, Kogus=@kogus, Hind=@hind, LaoID=@laoid WHERE Id=@id", conn);
                     cmd.Parameters.AddWithValue("@id", ID);
                     cmd.Parameters.AddWithValue("@toode", Nimetus_txt.Text);
                     cmd.Parameters.AddWithValue("@kogus", Kogus_txt.Text);
                     cmd.Parameters.AddWithValue("@hind", Hind_txt.Text);
                     cmd.Parameters.AddWithValue("@pilt", Nimetus_txt.Text + extension);
+                    cmd.Parameters.AddWithValue("@laoid", Ladu_cb);
                     cmd.ExecuteNonQuery();
 
                     conn.Close();
@@ -158,7 +188,7 @@ namespace Andmebass_TARpv23
         int ID = 0;
         private void dataGridView1_RowHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            ID = (int)dataGridView1.Rows[e.RowIndex].Cells["Id"].Value; // Устанавливаем значение для глобальной переменной ID
+            ID = (int)dataGridView1.Rows[e.RowIndex].Cells["Id"].Value; 
             Nimetus_txt.Text = dataGridView1.Rows[e.RowIndex].Cells["Nimetus"].Value.ToString();
             Kogus_txt.Text = dataGridView1.Rows[e.RowIndex].Cells["Kogus"].Value.ToString();
             Hind_txt.Text = dataGridView1.Rows[e.RowIndex].Cells["Hind"].Value.ToString();
@@ -197,6 +227,51 @@ namespace Andmebass_TARpv23
             else
             {
                 MessageBox.Show("Puudub toode nimetus või ole Cancel vajutatud");
+            }
+        }
+        private void dataGridView1_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0 && e.ColumnIndex == 4)
+            {
+                imageData = dataGridView1.Rows[e.RowIndex].Cells["FusPilt"].Value as byte[];
+                if (imageData != null)
+                {
+                    using (MemoryStream ms = new MemoryStream(imageData))
+                    {
+                        Image image = Image.FromStream(ms);
+                        LoopIt(image, e.RowIndex);
+                    }
+                }
+            }
+        }
+        private void LoopIt(Image image, int r)
+        {
+            popupForm = new Form();
+            popupForm.FormBorderStyle = FormBorderStyle.None;
+            popupForm.StartPosition = FormStartPosition.Manual;
+            popupForm.Size = image.Size;
+
+
+            PictureBox pictureBox = new PictureBox();
+            pictureBox.Image = image;
+            pictureBox.Dock = DockStyle.Fill;
+            pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+
+            popupForm.Controls.Add(pictureBox);
+
+            Rectangle cellRectangle = dataGridView1.GetCellDisplayRectangle(4, r, true);
+            Point popupLocation = dataGridView1.PointToScreen(cellRectangle.Location);
+
+            popupForm.Location = new Point(popupLocation.X + cellRectangle.Width, popupLocation.Y);
+
+            popupForm.Show();
+        }
+
+        private void dataGridView1_CellMouseLeave(object sender, DataGridViewCellEventArgs e)
+        {
+            if (popupForm != null && !popupForm.IsDisposed)
+            {
+                popupForm.Close();
             }
         }
     }
