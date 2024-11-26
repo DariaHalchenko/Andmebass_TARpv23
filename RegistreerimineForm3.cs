@@ -57,9 +57,9 @@ namespace Andmebass_TARpv23
                         // Открываем основную форму для "omanik" (Form1)
                         Form1 form1 = new Form1();
                         form1.Show();
-                        // Открываем также форму Кассы для "omanik"
-                        //KassaForm4 kassaForm = new KassaForm4();
-                        //kassaForm.Show();
+                        //Открываем также форму Кассы для "omanik"
+                        KassaForm4 kassaForm = new KassaForm4();
+                        kassaForm.Show();
                     }
                 }
                 catch (Exception ex)
