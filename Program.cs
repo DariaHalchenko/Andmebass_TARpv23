@@ -16,7 +16,7 @@ namespace Andmebass_TARpv23
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Application.Run(new RegistreerimineForm3());
         }
     }
 }

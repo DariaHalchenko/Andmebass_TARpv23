@@ -68,7 +68,7 @@ namespace Andmebass_TARpv23
                     cmd.ExecuteNonQuery();
                     ID = Convert.ToInt32(cmd.ExecuteScalar());
 
-                    cmd = new SqlCommand("Insert into Toode(Nimetus, Kogus, Hind, Pilt) Values (@toode,@kogus,@hind,@pilt)", conn);
+                    cmd = new SqlCommand("Insert into Toode(Nimetus, Kogus, Hind, Pilt, LaoID) Values (@toode,@kogus,@hind,@pilt,@ladu)", conn);
                     cmd.Parameters.AddWithValue("@toode", Nimetus_txt.Text);
                     cmd.Parameters.AddWithValue("@kogus", Kogus_txt.Text);
                     cmd.Parameters.AddWithValue("@hind", Hind_txt.Text);
@@ -80,6 +80,7 @@ namespace Andmebass_TARpv23
                     cmd.ExecuteNonQuery();
 
                     conn.Close();
+                    Emaldamine();
                     NaitaAndmed();
                 }
                 catch (Exception)
@@ -112,12 +113,12 @@ namespace Andmebass_TARpv23
                     Emaldamine();
                     NaitaAndmed();
 
-                    MessageBox.Show("Запись успешно удалена", "Удаление");
+                    MessageBox.Show("Salvestus on edukalt kustutatud", "Kustutamine");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при удалении записи: {ex.Message}");
+                MessageBox.Show($"Viga kirje kustutamisel: {ex.Message}");
             }
         }
 
@@ -141,41 +142,49 @@ namespace Andmebass_TARpv23
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при удалении файла: {ex.Message}");
+                MessageBox.Show($"Viga faili kustutamisel: {ex.Message}");
             }
         }
 
+        //Исправь проблемы с картинками при запуске запроса на обновление
         private void Uuenda_btn_Click(object sender, EventArgs e)
         {
-            if (Nimetus_txt.Text.Trim() != string.Empty && Kogus_txt.Text.Trim() != string.Empty && Hind_txt.Text.Trim() != string.Empty)
+            try
             {
-                try
-                {
-                    conn.Open();
-                    cmd = new SqlCommand("Update Toode SET Nimetus=@toode, Kogus=@kogus, Hind=@hind, LaoID=@laoid WHERE Id=@id", conn);
-                    cmd.Parameters.AddWithValue("@id", ID);
-                    cmd.Parameters.AddWithValue("@toode", Nimetus_txt.Text);
-                    cmd.Parameters.AddWithValue("@kogus", Kogus_txt.Text);
-                    cmd.Parameters.AddWithValue("@hind", Hind_txt.Text);
-                    cmd.Parameters.AddWithValue("@pilt", Nimetus_txt.Text + extension);
-                    cmd.Parameters.AddWithValue("@laoid", Ladu_cb);
-                    cmd.ExecuteNonQuery();
+                // Получаем путь для нового изображения
+                string imagePath = Path.Combine(Path.GetFullPath(@"..\..\Pildid"), Nimetus_txt.Text + extension);
 
-                    conn.Close();
-                    NaitaAndmed();
-                    Emaldamine();
-                    MessageBox.Show("Andmed elukalt uuendatud", "Uuendamine");
-                }
-                catch (Exception)
+                if (File.Exists(imagePath))
                 {
-                    MessageBox.Show("Andmebaasiga viga");
+                    File.Delete(imagePath); // Удаляем старое изображение, если оно существует
                 }
+
+               
+                File.Copy(open.FileName, imagePath);
+
+                // Обновляем запись в базе данных
+                conn.Open();
+                cmd = new SqlCommand("UPDATE Toode SET Nimetus=@toode, Kogus=@kogus, Hind=@hind, Pilt=@pilt, LaoID=@laoid WHERE Id=@id", conn);
+                cmd.Parameters.AddWithValue("@id", ID);
+                cmd.Parameters.AddWithValue("@toode", Nimetus_txt.Text);
+                cmd.Parameters.AddWithValue("@kogus", Kogus_txt.Text);
+                cmd.Parameters.AddWithValue("@hind", Hind_txt.Text);
+                cmd.Parameters.AddWithValue("@pilt", Nimetus_txt.Text + extension); // Обновляем имя изображения
+                cmd.Parameters.AddWithValue("@laoid", Ladu_cb.Text); // Обновляем категорию
+                cmd.ExecuteNonQuery();
+
+                conn.Close();
+                NaitaAndmed();
+                Emaldamine();
+                MessageBox.Show("Andmed on edukalt uuendatud", "Uuendamine");
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Sisesta andmeid");
+                MessageBox.Show($"Viga andmebaasiga: {ex.Message}");
             }
         }
+
+
 
         private void Emaldamine()
         {
@@ -210,7 +219,7 @@ namespace Andmebass_TARpv23
             open.InitialDirectory = @"C:\Users\opilane\Pictures\";
             open.Multiselect = false;
             open.Filter = "Images Files(*.jpeg;*.png;*.bmp;*.jpg)|*.jpeg;*.png;*.bmp;*.jpg";
-            FileInfo openfile = new FileInfo(@"C:\Users\opilane\Pictures\" + open.FileName);
+
             if (open.ShowDialog() == DialogResult.OK && Nimetus_txt.Text != null)
             {
                 save = new SaveFileDialog();
@@ -218,8 +227,17 @@ namespace Andmebass_TARpv23
                 extension = Path.GetExtension(open.FileName);
                 save.FileName = Nimetus_txt.Text + extension;
                 save.Filter = "Images" + Path.GetExtension(open.FileName) + "|" + Path.GetExtension(open.FileName);
-                if (save.ShowDialog() == DialogResult.OK && Nimetus_txt != null)
+
+                if (save.ShowDialog() == DialogResult.OK && Nimetus_txt.Text != null)
                 {
+                    // If there's an old image, delete it first
+                    string oldImagePath = Path.Combine(Path.GetFullPath(@"..\..\Pildid"), Nimetus_txt.Text + extension);
+                    if (File.Exists(oldImagePath))
+                    {
+                        File.Delete(oldImagePath);
+                    }
+
+                    // Copy the new image
                     File.Copy(open.FileName, save.FileName);
                     pictureBox1.Image = Image.FromFile(save.FileName);
                 }
@@ -229,6 +247,7 @@ namespace Andmebass_TARpv23
                 MessageBox.Show("Puudub toode nimetus või ole Cancel vajutatud");
             }
         }
+
         private void dataGridView1_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0 && e.ColumnIndex == 4)
@@ -272,6 +291,125 @@ namespace Andmebass_TARpv23
             if (popupForm != null && !popupForm.IsDisposed)
             {
                 popupForm.Close();
+            }
+        }
+
+        private void ladu_btn_Click(object sender, EventArgs e)
+        {
+            Form2 addLaduForm = new Form2();
+
+            addLaduForm.OnLaduAdded += AddLaduForm_OnLaduAdded; ;
+
+            addLaduForm.ShowDialog();
+        }
+
+        private void AddLaduForm_OnLaduAdded()
+        {
+            try
+            {
+                conn.Open();
+                SqlCommand cmd = new SqlCommand("SELECT Id, LaoNimetus FROM Ladu", conn);
+                SqlDataReader reader = cmd.ExecuteReader();
+
+                Ladu_cb.Items.Clear();
+
+                while (reader.Read())
+                {
+                    Ladu_cb.Items.Add(new KeyValuePair<int, string>(
+                        (int)reader["Id"],
+                        reader["LaoNimetus"].ToString()
+                    ));
+                }
+
+                conn.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Viga: {ex.Message}");
+            }
+        }
+
+        //Метод KeyPress обрабатывает каждый символ, который вводится в текстовое поле, до того, как этот символ будет добавлен в поле.
+        // Проверки для полей Kogus_txt 
+        private void Kogus_txt_KeyPress(object sender, KeyPressEventArgs e) 
+        {
+            // Разрешаем только цифры и точку
+            if (!char.IsDigit(e.KeyChar) && e.KeyChar != 8)
+            {
+                e.Handled = true;
+            }
+        }
+
+        //проверки  на отрицательные значения
+        private void Kogus_txt_Leave(object sender, EventArgs e)
+        {
+            if (int.TryParse(Kogus_txt.Text, out int kogus) && kogus < 0)
+            {
+                MessageBox.Show("Kogus ei saa olla negatiivne!");
+                Kogus_txt.Text = "0";
+            }
+        }
+
+        // Проверки для полей Hind_txt
+        private void Hind_txt_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Разрешаем вводить только цифры, одну точку
+            if (!char.IsDigit(e.KeyChar) && e.KeyChar != 8 && e.KeyChar != '.')
+            {
+                e.Handled = true;
+            }
+            // Запрещаем несколько точек в числе
+            if (e.KeyChar == '.' && Hind_txt.Text.Contains("."))
+            {
+                e.Handled = true;
+            }
+        }
+
+        //проверки  на отрицательные значения
+        private void Hind_txt_Leave(object sender, EventArgs e)
+        {
+            if (decimal.TryParse(Hind_txt.Text, out decimal hind) && hind < 0)
+            {
+                MessageBox.Show("Hind ei saa olla negatiivne!");
+                Hind_txt.Text = "0";
+            }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            Kogus_txt.KeyPress += Kogus_txt_KeyPress;
+            Hind_txt.KeyPress += Hind_txt_KeyPress;
+            Kogus_txt.Leave += Kogus_txt_Leave;
+            Hind_txt.Leave += Hind_txt_Leave;
+        }
+        private void SearchProducts(string searchTerm)
+        {
+            conn.Open();
+
+            string query = "SELECT * FROM Toode WHERE Nimetus LIKE @searchTerm";
+            cmd = new SqlCommand(query, conn);
+
+            cmd.Parameters.AddWithValue("@searchTerm", "%" + searchTerm + "%");
+
+            adapter = new SqlDataAdapter(cmd);
+            DataTable dt = new DataTable();
+            adapter.Fill(dt);
+            dataGridView1.DataSource = dt;
+
+            conn.Close();
+        }
+
+        private void OtsidaButton_Click_1(object sender, EventArgs e)
+        {
+            string searchTerm = otsida_txt.Text.Trim();
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+
+                SearchProducts(searchTerm);
+            }
+            else
+            {
+                MessageBox.Show("Palun sisesta otsimiseks toote nimi!");
             }
         }
     }
